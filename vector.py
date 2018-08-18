@@ -9,9 +9,23 @@ class Vector():
         self.data = tuple(data)
         self.dim = len(data)
         self.tolerance = tolerance
+        if 1 <= tolerance <= 0:
+            raise ValueError('Tolerance must be between 0 and 1.')
 
     def __str__(self):
-        return 'Vector: {}'.format(self.data)
+        digits = 0
+        decimal = self.tolerance % 1
+        while(decimal < 1):
+            decimal *= 10
+            digits += 1
+
+        v = ['<']
+        for i in self.data:
+            v.append('{}'.format(round(i, digits)))
+            v.append(', ')
+        v.pop()
+        v.append('>')
+        return ''.join(v)
 
     def __eq__(self, other):
         if self.dim != other.dim:

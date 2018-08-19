@@ -203,5 +203,9 @@ class TestVectorMethods(unittest.TestCase):
         v = V([0, 0])
         self.assertTrue(v.isZero())
 
+    def test_scale(self):
+        v = V([1,1])
+        self.assertEqual(V([2,2]), v.scale(2))
+
 if __name__ == '__main__':
     unittest.main()

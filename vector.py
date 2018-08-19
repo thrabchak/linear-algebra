@@ -28,8 +28,11 @@ class Vector():
         return ''.join(v)
 
     def __eq__(self, other):
-        if self.dim != other.dim:
+        if other == None:
             return False
+
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
 
         for x,y in zip(self.data, other.data):
             if abs(x-y) > self.tolerance:
@@ -38,18 +41,28 @@ class Vector():
         return True
 
     def plus(self, other):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         result = [x+y for x,y in zip(self.data, other.data)]
         return Vector(result)
 
     def minus(self, other):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         result = [x-y for x,y in zip(self.data, other.data)]
         return Vector(result)
 
     def scale(self, value):
         result = [value*x for x in self.data]
         self.data = result
+        return self
 
     def dotProduct(self, other):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         product = 0
         for x,y in zip(self.data, other.data):
             product += (x*y)
@@ -64,11 +77,22 @@ class Vector():
             self.scale(1./mag)
 
     def angleBetween(self, other, inRadians=True):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         # a dot b = |a| |b| cos theta
         bottom = self.magnitude() * other.magnitude()
         if bottom != 0:
             top = self.dotProduct(other)
-            rads = math.acos(top/bottom)
+            lhs = top/bottom
+
+            # Have to account for floating point error propagation here.
+            if (abs(lhs-1) < self.tolerance):
+                lhs = 1
+            elif (abs(lhs+1) < self.tolerance):
+                lhs = -1
+
+            rads = math.acos(lhs)
             if inRadians:
                 return rads
             else:
@@ -80,21 +104,27 @@ class Vector():
         return self.magnitude() < self.tolerance
 
     def isParallel(self, other):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         if self.isZero() or other.isZero():
             return True
-        scaleFactor = other.data[0]/self.data[0]
-        for x,y in zip(self.data, other.data):
-            if x == 0 or y == 0:
-                continue
-            testScaleFactor = y/x
-            if (abs(testScaleFactor-scaleFactor) > self.tolerance):
-                return False
-        return True
+        
+        angle = self.angleBetween(other)
+        if angle < self.tolerance or abs(angle - math.pi) < self.tolerance:
+            return True
+
 
     def isPerpendicular(self, other):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+        
         return abs(self.dotProduct(other)) < self.tolerance
 
     def project(self, v):
+        if self.dim != v.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         b = copy.deepcopy(self)
         b.normalize()
         mag = b.dotProduct(v)
@@ -102,6 +132,9 @@ class Vector():
         return b
 
     def crossProduct(self, other):
+        if self.dim != other.dim:
+            raise ValueError('Vectors have different dimensions.')
+
         if self.dim == 2:
             a = Vector(self.data.append(0))
             b = Vector(other.data.append(0))
@@ -115,3 +148,6 @@ class Vector():
             return v
         else:
             print('Cross product not supported in dimension: ' + str(self.dim))
+
+    def getCopy(self):
+        return copy.deepcopy(self)

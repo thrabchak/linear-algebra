@@ -7,13 +7,10 @@ L = line.Line
 
 class TestLineMethods(unittest.TestCase):
 
-    def assertDoubleEqual(self, a, b):
-        self.assertTrue(abs(a-b) < vector.EPSILON)
-
     def test_create(self):
         norm = V([1,2])
         l = L(norm, 1)
-        self.assertTrue(line != None)
+        self.assertTrue(l != None)
 
     def test_parallel(self):
         n1 = V([3, -2])
@@ -49,7 +46,7 @@ class TestLineMethods(unittest.TestCase):
         n2 = V([10.115, 7.09])
         l2 = L(n2, 3.025)
         (a, b) = l1.intersect(l2)
-        self.assertEqual(a, "SAME_LINE")
+        self.assertEqual(a, "SAME")
 
     def test_intersect2(self):
         n1 = V([7.204, 3.182])

@@ -35,6 +35,9 @@ class Line():
         z = x.minus(y)
         return self.normalVector.isParallel(z)
 
+    def __str__(self):
+        return "Line2D: n: " + str(self.normalVector) + " k: " + str(self.constant)
+
     def intersect(self, other):
         if (self.isParallel(other)):
             if self == other:
@@ -87,6 +90,9 @@ class Line3(Line):
 
         z = x.minus(y)
         return self.directionVector.isParallel(z)
-                
+
+    def __str__(self):
+        return "Line3D: pt: " + str(self.basePoint) + " dir: " + str(self.directionVector)
+
     def intersect(self, other):
         raise ValueError('Not implemented yet.')

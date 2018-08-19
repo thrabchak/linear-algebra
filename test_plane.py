@@ -73,5 +73,12 @@ class TestPaneMethods(unittest.TestCase):
         self.assertEqual(a, "SAME")
         self.assertEqual(b, None)
 
+    def test_intersect_with_plane(self):
+        p1 = P(V([1,1,1]), -1)
+        p2 = P(V([1,2,3]), -4)
+        (a, b) = p1.intersectWithPlane(p2)
+        l = L3(V([2,-3,0]), V([1,-2,1]))
+        self.assertTrue(b.isParallel(l))
+
 if __name__ == '__main__':
     unittest.main()

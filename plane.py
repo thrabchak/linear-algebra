@@ -26,6 +26,9 @@ class Plane():
             return vector.Vector([self.constant/a, 0, 0], self.normalVector.tolerance)   
 
     def isParallel(self, other):
+        if not isinstance(other, Plane):
+            raise ValueError('Argument is not a plane.')
+
         return self.normalVector.isParallel(other.normalVector)
 
     def __eq__(self, other):
@@ -56,3 +59,42 @@ class Plane():
         p = l.directionVector.getCopy()
         pt = l.basePoint.plus(p.scale(s))
         return ("INTERSECTION", pt)
+
+    def intersectWithPlane(self, p):
+        if not isinstance(p, Plane):
+            raise ValueError('Argument is not a plane.')
+
+        if (self.isParallel(p)):
+            if self == p:
+                return ("SAME", None)
+            return ("NO_INTERSECTION", None)
+
+        n1 = self.normalVector
+        n2 = p.normalVector
+        u = n1.crossProduct(n2).normalize()
+
+        a = self.normalVector.data[0]
+        b = self.normalVector.data[1]
+        c = self.normalVector.data[2]
+        d = p.normalVector.data[0]
+        e = p.normalVector.data[1]
+        f = p.normalVector.data[2]
+        k1 = self.constant
+        k2 = p.constant
+
+        if (u.data[0] != 0):
+            x = 0
+            y = (b*f - c*k2) / (b*f - c*e)
+            z = (b*k2 - b*e) / (b*f - c*e)
+        elif (u.data[1] != 0):
+            x = (a*f - c*k2) / (a*f - c*d)
+            y = 0
+            z = (a*k2 - a*d) / (a*f - c*d)
+        else:
+            x = (a*e - b*k2) / (a*e - b*d)
+            y = (a*k2 - a*d) / (a*e - b*d)
+            z = 0
+        pt = vector.Vector([x,y,z])
+        l = line.Line3(pt, u)
+
+        return ("INTERSECTION", l)

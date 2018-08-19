@@ -75,6 +75,7 @@ class Vector():
         mag = self.magnitude()
         if mag != 0:
             self.scale(1./mag)
+        return self
 
     def angleBetween(self, other, inRadians=True):
         if self.dim != other.dim:
@@ -118,7 +119,7 @@ class Vector():
     def isPerpendicular(self, other):
         if self.dim != other.dim:
             raise ValueError('Vectors have different dimensions.')
-        
+
         return abs(self.dotProduct(other)) < self.tolerance
 
     def project(self, v):
